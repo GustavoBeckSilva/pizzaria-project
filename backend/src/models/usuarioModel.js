@@ -20,6 +20,16 @@ async function buscarUsuarioPorId(id) {
   return res.rows[0];
 }
 
+async function buscarUsuarioPorEmail(email) {
+  const res = await db.query(
+    `SELECT id, nome, email, tipo_usuario, criado_em, atualizado_em
+     FROM tb_usuarios
+     WHERE email = $1`,
+    [email]
+  );
+  return res.rows[0];
+}
+
 async function criarUsuario({ nome, email, senha_hash, tipo_usuario }) {
   const res = await db.query(
     `INSERT INTO tb_usuarios (nome, email, senha_hash, tipo_usuario)
@@ -52,6 +62,7 @@ async function removerUsuario(id) {
 module.exports = {
   listarUsuarios,
   buscarUsuarioPorId,
+  buscarUsuarioPorEmail,
   criarUsuario,
   atualizarUsuario,
   removerUsuario

@@ -5,11 +5,13 @@ const role = require('../middlewares/roleMiddleware');
 const {
   getPedidos,
   getPedidoById,
+  getAllPedidos,
   postPedido,
   patchPedidoStatus,
   deletePedido
 } = require('../controllers/pedidoController');
 
+router.get('/all', auth, role('pizzaiolo'), getAllPedidos);
 router.get('/',           auth, getPedidos);
 router.get('/:id',        auth, getPedidoById);
 router.post('/',          auth, postPedido);

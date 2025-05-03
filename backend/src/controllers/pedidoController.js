@@ -15,6 +15,16 @@ const {
       res.status(500).json({ error: 'Erro ao listar pedidos' });
     }
   }
+
+  async function getAllPedidos(req, res) {
+    try {
+      const pedidos = await listarPedidos(null);  // passando null para listar tudo
+      return res.json(pedidos);
+    } catch (err) {
+      console.error('Erro ao listar todos os pedidos:', err);
+      return res.status(500).json({ error: 'Erro ao listar todos os pedidos', details: err.message });
+    }
+  }
   
   async function getPedidoById(req, res) {
     try {
@@ -56,6 +66,7 @@ const {
   module.exports = {
     getPedidos,
     getPedidoById,
+    getAllPedidos,
     postPedido,
     patchPedidoStatus,
     deletePedido
