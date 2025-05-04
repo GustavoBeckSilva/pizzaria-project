@@ -18,6 +18,7 @@ import FlavorForm from './pages/Pizzaiolo/FlavorForm';
 import MenuPage from './pages/Cliente/MenuPage';
 import CarrinhoPage from './pages/Cliente/CarrinhoPage';
 import PedidosPage from './pages/Cliente/PedidosPage';
+import CheckoutPage from './pages/Cliente/CheckoutPage';
 
 // Layout compartilhado
 import Layout from './components/Layout';
@@ -37,6 +38,7 @@ function App() {
               <Route element={<RotaProtegida />}>
                 <Route path="/cliente/menu" element={<MenuPage />} />
                 <Route path="/cliente/carrinho" element={<CarrinhoPage />} />
+                <Route path="/cliente/checkout" element={<CheckoutPage />} />
                 <Route path="/cliente/pedidos" element={<PedidosPage />} />
               </Route>
 

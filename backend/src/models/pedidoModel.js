@@ -28,8 +28,8 @@ async function buscarPedidoPorId(id) {
 
 async function criarPedido(usuarioId) {
   const res = await db.query(
-    `INSERT INTO tb_pedidos (usuario_id)
-     VALUES ($1)
+    `INSERT INTO tb_pedidos (usuario_id, status)
+     VALUES ($1, 'pendente')
      RETURNING id, usuario_id, status, criado_em, atualizado_em`,
     [usuarioId]
   );
