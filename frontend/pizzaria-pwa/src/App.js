@@ -12,6 +12,7 @@ import RegisterPage from './pages/Auth/RegisterPage';
 // Páginas de Pizzaiolo
 import DashboardPage from './pages/Pizzaiolo/DashboardPage';
 import SaboresPage from './pages/Pizzaiolo/SaboresPage';
+import FlavorForm from './pages/Pizzaiolo/FlavorForm';
 
 // Páginas de Cliente
 import MenuPage from './pages/Cliente/MenuPage';
@@ -43,6 +44,8 @@ function App() {
               <Route element={<RotaProtegida papelObrigatorio={PAPEIS.PIZZAIOTO} />}>
                 <Route path="/pizzaiolo/pedidos" element={<DashboardPage />} />
                 <Route path="/pizzaiolo/sabores" element={<SaboresPage />} />
+                <Route path="/pizzaiolo/sabores/novo" element={<FlavorForm />} />
+                <Route path="/pizzaiolo/sabores/:id" element={<FlavorForm />} />
               </Route>
 
               {/* Redirecionamento padrão */}
