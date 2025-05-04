@@ -1,12 +1,14 @@
+// src/index.js
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom/client';              // ← novo import
 import App from './App';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const container = document.getElementById('root');
+const root = ReactDOM.createRoot(container);         // ← createRoot em vez de render
 root.render(<App />);
 
-// Habilita o service worker (cache offline)
+// Agora registramos o SW para produção (ativará offline/fallback)
 serviceWorkerRegistration.register();
