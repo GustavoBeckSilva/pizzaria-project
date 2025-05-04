@@ -16,7 +16,7 @@ yarn-error.log
 
 # Backend (Node.js)
 
-node_modules
+/backend/node_modules
 dist
 build
 coverage
