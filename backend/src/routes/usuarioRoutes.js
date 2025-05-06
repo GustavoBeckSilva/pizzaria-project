@@ -1,7 +1,6 @@
-// src/routes/usuarioRoutes.js
 const router = require('express').Router();
 const auth = require('../middlewares/authMiddleware');
-const { 
+const {
   getUsuarios,
   getUsuarioById,
   postUsuario,
@@ -9,11 +8,13 @@ const {
   deleteUsuario
 } = require('../controllers/usuarioController');
 
+router.post('/', postUsuario);
+
 router.use(auth);
-router.get('/',          getUsuarios);
-router.get('/:id',       getUsuarioById);
-router.post('/',         postUsuario);
-router.put('/:id',       putUsuario);
-router.delete('/:id',    deleteUsuario);
+
+router.get('/',        getUsuarios);
+router.get('/:id',     getUsuarioById);
+router.put('/:id',     putUsuario);
+router.delete('/:id',  deleteUsuario);
 
 module.exports = router;

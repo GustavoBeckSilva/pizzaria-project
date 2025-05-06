@@ -8,6 +8,7 @@ import { PAPEIS } from './utils/constantes';
 // Páginas de Autenticação
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
+import HomePage from './pages/Public/HomePage';
 
 // Páginas de Pizzaiolo
 import DashboardPage from './pages/Pizzaiolo/DashboardPage';
@@ -30,6 +31,9 @@ function App() {
         <BrowserRouter>
           <Layout>
             <Routes>
+              {/* Rota inicial para HomePage */}
+              <Route path="/home" element={<HomePage />} />
+              
               {/* Rotas públicas */}
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />

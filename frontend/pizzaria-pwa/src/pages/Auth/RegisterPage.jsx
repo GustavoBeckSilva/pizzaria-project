@@ -11,6 +11,8 @@ export default function RegisterPage() {
     nome: '',
     email: '',
     senha: '',
+    tipo_usuario: '',
+    adminSecret: ''
   });
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(false);
@@ -24,16 +26,35 @@ export default function RegisterPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setErro('');
+
+    if (!form.tipo_usuario) {
+      setErro('Selecione o tipo de usuário');
+      return;
+    }
+    if (form.tipo_usuario === PAPEIS.PIZZAIOTO && !form.adminSecret) {
+      setErro('Informe o código de pizzaiolo');
+      return;
+    }
+
     setCarregando(true);
     try {
-      // tipo_usuario fixo como CLIENTE na UI
-      const dadosRegistro = { ...form, tipo_usuario: PAPEIS.CLIENTE };
-      const { user, token } = await authService.register(dadosRegistro);
+      const dados = {
+        nome: form.nome,
+        email: form.email,
+        senha_hash: form.senha,
+        tipo_usuario: form.tipo_usuario,
+        ...(form.tipo_usuario === PAPEIS.PIZZAIOTO && { adminSecret: form.adminSecret })
+      };
+
+      const { user, token } = await authService.register(dados);
       fazerLogin(user, token);
-      navigate('/cliente/menu', { replace: true });
+
+      const destino = form.tipo_usuario === PAPEIS.CLIENTE
+        ? '/cliente/menu'
+        : '/pizzaiolo/pedidos';
+      navigate(destino, { replace: true });
     } catch (err) {
-      const msg = err.response?.data?.error || 'Erro ao registrar';
-      setErro(msg);
+      setErro(err.response?.data?.error || 'Erro ao registrar');
     } finally {
       setCarregando(false);
     }
@@ -68,6 +89,35 @@ export default function RegisterPage() {
             onChange={handleChange}
             placeholder="••••••••"
           />
+
+          <div className="mb-3">
+            <label htmlFor="tipo_usuario" className="form-label">
+              Tipo de usuário
+            </label>
+            <select
+              id="tipo_usuario"
+              name="tipo_usuario"
+              className="form-select"
+              value={form.tipo_usuario}
+              onChange={handleChange}
+            >
+              <option value="">Selecione...</option>
+              <option value={PAPEIS.CLIENTE}>Cliente</option>
+              <option value={PAPEIS.PIZZAIOTO}>Pizzaiolo</option>
+            </select>
+          </div>
+
+          {form.tipo_usuario === PAPEIS.PIZZAIOTO && (
+            <FormInput
+              label="Código de Pizzaiolo"
+              name="adminSecret"
+              type="password"
+              value={form.adminSecret}
+              onChange={handleChange}
+              placeholder="Informe o código de pizzaiolo"
+            />
+          )}
+
           <Button type="submit" disabled={carregando}>
             {carregando ? 'Registrando...' : 'Registrar'}
           </Button>

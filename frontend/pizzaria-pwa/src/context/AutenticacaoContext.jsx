@@ -10,10 +10,24 @@ export function ProvedorAutenticacao({ children }) {
   useEffect(() => {
     const userStorage = localStorage.getItem('usuario');
     const tokenStorage = localStorage.getItem('token');
-    if (userStorage && tokenStorage) {
-      setUsuario(JSON.parse(userStorage));
-      setToken(tokenStorage);
+
+    // só tenta parsear se não for 'undefined' e existir ambos
+    if (
+      userStorage &&
+      userStorage !== 'undefined' &&
+      tokenStorage &&
+      tokenStorage !== 'undefined'
+    ) {
+      try {
+        setUsuario(JSON.parse(userStorage));
+        setToken(tokenStorage);
+      } catch (e) {
+        console.error('Falha ao parsear usuário salvo:', e);
+        localStorage.removeItem('usuario');
+        localStorage.removeItem('token');
+      }
     }
+
     setCarregando(false);
   }, []);
 
@@ -31,10 +45,8 @@ export function ProvedorAutenticacao({ children }) {
     localStorage.removeItem('token');
   }
 
-  // Aguarde carregamento inicial para não redirecionar prematuramente
-  if (carregando) {
-    return null; // ou spinner de carregamento
-  }
+  // enquanto carrega, não renderiza nada (ou um spinner se preferir)
+  if (carregando) return null;
 
   return (
     <AutenticacaoContext.Provider value={{ usuario, token, fazerLogin, fazerLogout }}>
