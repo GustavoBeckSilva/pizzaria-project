@@ -43,7 +43,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/sabores', saborRoutes);
 app.use('/api/pedidos', pedidoRoutes);
-app.use('/api/pedidos/:pedidoId/pizzas', pizzaRoutes);
+app.use('/api/pedidos/:pedidoId/pizzas', (req, res, next) => {
+  req.pedidoId = req.params.pedidoId;
+  next();
+}, pizzaRoutes);
 app.use('/api/tamanhos', tamanhoRoutes);
 
 const PORT = process.env.PORT || 3000;
