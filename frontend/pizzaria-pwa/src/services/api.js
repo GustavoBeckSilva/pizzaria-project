@@ -4,11 +4,11 @@ import { URL_BASE_API } from '../utils/constantes';
 const api = axios.create({
   baseURL: URL_BASE_API,
   headers: {
-    'Content-Type': 'application/json',
-  },
+    'Content-Type': 'application/json'
+  }
 });
 
-// Interceptor para incluir o JWT em cada requisição
+// Interceptor para incluir JWT
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
