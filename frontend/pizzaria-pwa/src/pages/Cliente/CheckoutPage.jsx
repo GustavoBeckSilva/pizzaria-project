@@ -1,19 +1,19 @@
 // src/pages/Cliente/CheckoutPage.jsx
-import React, { useContext, useState, useEffect } from 'react';  // <-- inclui useEffect
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CarrinhoContext } from '../../context/CarrinhoContext';
-import * as pedidosService from '../../services/pedidos';
-import * as pizzasService from '../../services/pizzas';
 import * as saboresService from '../../services/sabores';
 import Button from '../../components/Button';
+import { formatarPreco } from '../../utils/formatadores';
+import * as pedidosService from '../../services/pedidos';
+import * as pizzasService from '../../services/pizzas';
 
 export default function CheckoutPage() {
   const { itens, limparCarrinho } = useContext(CarrinhoContext);
-
-  // 1) Estado para lista de sabores com nomes
   const [sabores, setSabores] = useState([]);
+  const [carregando, setCarregando] = useState(false);
+  const navigate = useNavigate();
 
-  // 2) Carrega todos os sabores só uma vez
   useEffect(() => {
     (async () => {
       const lista = await saboresService.getAll();
@@ -21,15 +21,17 @@ export default function CheckoutPage() {
     })();
   }, []);
 
-  const [carregando, setCarregando] = useState(false);
-  const navigate = useNavigate();
-
-  // 3) Função para mapear IDs -> nomes
-  function nomesDosSabores(ids) {
+  function nomeSabores(ids) {
     return ids
       .map(id => sabores.find(s => s.id === id)?.nome || '—')
       .join(', ');
   }
+
+  function subtotal(pizza) {
+    return pizza.precoUnit * pizza.quantidade;
+  }
+
+  const total = itens.reduce((acc, pizza) => acc + subtotal(pizza), 0);
 
   async function handleConfirm() {
     setCarregando(true);
@@ -50,21 +52,33 @@ export default function CheckoutPage() {
   return (
     <div>
       <h2 className="mb-4">Checkout</h2>
+
       {itens.map((pizza, i) => (
         <div key={i} className="card mb-3">
           <div className="card-body">
             <h5 className="card-title">
-              {pizza.quantidade} × Pizza {pizza.tamanho}
+              {pizza.quantidade} × Pizza {pizza.tamanho} —{' '}
+              <strong>{formatarPreco(pizza.precoUnit)}</strong> cada
             </h5>
             <p className="card-text">
-              Sabores: {nomesDosSabores(pizza.sabores)}
+              Sabores: {nomeSabores(pizza.sabores)}
+            </p>
+            <p className="card-text">
+              Subtotal: <strong>{formatarPreco(subtotal(pizza))}</strong>
             </p>
           </div>
         </div>
       ))}
-      <Button onClick={handleConfirm} disabled={carregando}>
-        {carregando ? 'Enviando pedido...' : 'Confirmar Pedido'}
-      </Button>
+
+      <div className="mb-4 text-end">
+        <h4>Total: {formatarPreco(total)}</h4>
+      </div>
+
+      <div className="text-center">
+        <Button onClick={handleConfirm} disabled={carregando}>
+          {carregando ? 'Enviando pedido...' : 'Confirmar Pedido'}
+        </Button>
+      </div>
     </div>
   );
 }

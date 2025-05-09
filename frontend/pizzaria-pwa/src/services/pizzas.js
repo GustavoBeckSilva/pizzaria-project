@@ -9,3 +9,8 @@ export async function addPizza(pedidoId, pizzaData) {
   );
   return resposta.data;
 }
+
+export async function getByPedidoId(pedidoId) {
+  const resposta = await api.get(`/pedidos/${pedidoId}/pizzas`);
+  return resposta.data; 
+}

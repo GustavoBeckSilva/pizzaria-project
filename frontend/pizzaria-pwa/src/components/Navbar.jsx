@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { AutenticacaoContext } from '../context/AutenticacaoContext';
 import { CarrinhoContext } from '../context/CarrinhoContext';
 import { PAPEIS } from '../utils/constantes';
@@ -15,9 +15,11 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
       <div className="container">
-      <Link className="navbar-brand" to="/home">Pizzaria</Link>
+        <NavLink className="navbar-brand fw-bold" to="/home">
+          🍕 Pizzaria
+        </NavLink>
 
         <button
           className="navbar-toggler"
@@ -32,54 +34,101 @@ export default function Navbar() {
         </button>
 
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav me-auto">
-            {!usuario && (
-              <>              
+          <ul className="navbar-nav me-auto gap-2">
+            {!usuario ? (
+              <>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/login">Login</Link>
+                  <NavLink
+                    to="/login"
+                    className={({ isActive }) =>
+                      `nav-link${isActive ? ' active' : ''}`
+                    }
+                  >
+                    Login
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/register">Registrar</Link>
-                </li>
-              </>
-            )}
-
-            {usuario && usuario.tipo_usuario === PAPEIS.CLIENTE && (
-              <>              
-                <li className="nav-item">
-                  <Link className="nav-link" to="/cliente/menu">Menu</Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/cliente/carrinho">
-                    Carrinho <span className="badge bg-secondary">{itens.length}</span>
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/cliente/pedidos">Meus Pedidos</Link>
+                  <NavLink
+                    to="/register"
+                    className={({ isActive }) =>
+                      `nav-link${isActive ? ' active' : ''}`
+                    }
+                  >
+                    Registrar
+                  </NavLink>
                 </li>
               </>
-            )}
-
-            {usuario && usuario.tipo_usuario === PAPEIS.PIZZAIOTO && (
-              <>              
+            ) : usuario.tipo_usuario === PAPEIS.CLIENTE ? (
+              <>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/pizzaiolo/pedidos">Dashboard</Link>
+                  <NavLink
+                    to="/cliente/menu"
+                    className={({ isActive }) =>
+                      `nav-link${isActive ? ' active' : ''}`
+                    }
+                  >
+                    Menu
+                  </NavLink>
+                </li>
+                <li className="nav-item position-relative">
+                  <NavLink
+                    to="/cliente/carrinho"
+                    className={({ isActive }) =>
+                      `nav-link${isActive ? ' active' : ''}`
+                    }
+                  >
+                    Carrinho
+                  </NavLink>
+                  {itens.length > 0 && (
+                    <span className="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle">
+                      {itens.length}
+                    </span>
+                  )}
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/pizzaiolo/sabores">Sabores</Link>
+                  <NavLink
+                    to="/cliente/pedidos"
+                    className={({ isActive }) =>
+                      `nav-link${isActive ? ' active' : ''}`
+                    }
+                  >
+                    Meus Pedidos
+                  </NavLink>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className="nav-item">
+                  <NavLink
+                    to="/pizzaiolo/pedidos"
+                    className={({ isActive }) =>
+                      `nav-link${isActive ? ' active' : ''}`
+                    }
+                  >
+                    Pedidos
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink
+                    to="/pizzaiolo/sabores"
+                    className={({ isActive }) =>
+                      `nav-link${isActive ? ' active' : ''}`
+                    }
+                  >
+                    Sabores
+                  </NavLink>
                 </li>
               </>
             )}
           </ul>
 
           {usuario && (
-            <ul className="navbar-nav">
-              <li className="nav-item">
-                <button className="btn btn-outline-danger" onClick={handleLogout}>
-                  Sair
-                </button>
-              </li>
-            </ul>
+            <button
+              className="btn btn-outline-light fw-semibold"
+              onClick={handleLogout}
+            >
+              Sair
+            </button>
           )}
         </div>
       </div>

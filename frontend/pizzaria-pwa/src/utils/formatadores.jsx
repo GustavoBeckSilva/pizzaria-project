@@ -9,3 +9,11 @@ export function extrairErro(erro) {
   }
   return erro.message || 'Erro desconhecido';
 }
+
+export function formatarPreco(valor) {
+  if (valor === undefined || valor === null) return '';
+  return valor.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  });
+}

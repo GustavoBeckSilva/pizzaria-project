@@ -41,12 +41,14 @@ export default function FlavorForm() {
     }
   }
 
+  function handleCancelar() {
+    navigate('/pizzaiolo/sabores');
+  }
+
   return (
     <div className="row justify-content-center">
       <div className="col-md-6">
-        <h2 className="mb-4">
-          {isEdicao ? 'Editar Sabor' : 'Adicionar Sabor'}
-        </h2>
+        <h2 className="mb-4">{isEdicao ? 'Editar Sabor' : 'Adicionar Sabor'}</h2>
 
         {erro && <div className="alert alert-danger">{erro}</div>}
 
@@ -60,9 +62,19 @@ export default function FlavorForm() {
             error={!nome && 'Informe um nome válido'}
           />
 
-          <Button type="submit" disabled={carregando}>
-            {carregando ? 'Salvando...' : 'Salvar'}
-          </Button>
+          <div className="d-flex justify-content-end gap-2">
+            <Button
+              type="button"
+              variant="outline-secondary"
+              disabled={carregando}
+              onClick={handleCancelar}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={carregando}>
+              {carregando ? 'Salvando...' : 'Salvar'}
+            </Button>
+          </div>
         </form>
       </div>
     </div>

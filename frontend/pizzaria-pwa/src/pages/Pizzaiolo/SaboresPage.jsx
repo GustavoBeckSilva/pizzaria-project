@@ -6,7 +6,8 @@ import Button from '../../components/Button';
 
 export default function SaboresPage() {
   const [sabores, setSabores] = useState([]);
-  const [deletando, setDeletando] = useState(null);
+  const [confirmId, setConfirmId] = useState(null);
+  const [carregandoId, setCarregandoId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,14 +19,26 @@ export default function SaboresPage() {
     setSabores(lista);
   }
 
-  async function handleDeletar(id) {
-    if (!window.confirm('Confirma exclusão deste sabor?')) return;
-    setDeletando(id);
+  function handleAdicionar() {
+    navigate('/pizzaiolo/sabores/novo');
+  }
+
+  function iniciarConfirmacao(id) {
+    setConfirmId(id);
+  }
+
+  function cancelarConfirmacao() {
+    setConfirmId(null);
+  }
+
+  async function confirmarDelecao(id) {
+    setCarregandoId(id);
     try {
       await saboresService.remove(id);
       setSabores(sabores.filter(s => s.id !== id));
     } finally {
-      setDeletando(null);
+      setCarregandoId(null);
+      setConfirmId(null);
     }
   }
 
@@ -33,9 +46,7 @@ export default function SaboresPage() {
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Gerenciar Sabores</h2>
-        <Button onClick={() => navigate('/pizzaiolo/sabores/novo')}>
-          Adicionar Sabor
-        </Button>
+        <Button onClick={handleAdicionar}>Adicionar Sabor</Button>
       </div>
 
       <table className="table table-hover">
@@ -56,19 +67,43 @@ export default function SaboresPage() {
               <td>{formatarData(sabor.criado_em)}</td>
               <td>{formatarData(sabor.atualizado_em)}</td>
               <td>
-                <button
-                  className="btn btn-sm btn-secondary me-2"
+                <Button
+                  variant="outline-secondary"
+                  size="sm"
+                  className="me-2"
                   onClick={() => navigate(`/pizzaiolo/sabores/${sabor.id}`)}
                 >
                   Editar
-                </button>
-                <button
-                  className="btn btn-sm btn-danger"
-                  onClick={() => handleDeletar(sabor.id)}
-                  disabled={deletando === sabor.id}
-                >
-                  {deletando === sabor.id ? 'Excluindo...' : 'Excluir'}
-                </button>
+                </Button>
+
+                {confirmId === sabor.id ? (
+                  <>
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      className="me-2"
+                      disabled={carregandoId === sabor.id}
+                      onClick={() => confirmarDelecao(sabor.id)}
+                    >
+                      {carregandoId === sabor.id ? 'Excluindo...' : 'Confirmar'}
+                    </Button>
+                    <Button
+                      variant="outline-secondary"
+                      size="sm"
+                      onClick={cancelarConfirmacao}
+                    >
+                      Cancelar
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => iniciarConfirmacao(sabor.id)}
+                  >
+                    Excluir
+                  </Button>
+                )}
               </td>
             </tr>
           ))}
