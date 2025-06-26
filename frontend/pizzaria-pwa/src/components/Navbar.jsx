@@ -38,22 +38,12 @@ export default function Navbar() {
             {!usuario ? (
               <>
                 <li className="nav-item">
-                  <NavLink
-                    to="/login"
-                    className={({ isActive }) =>
-                      `nav-link${isActive ? ' active' : ''}`
-                    }
-                  >
+                  <NavLink to="/login" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                     Login
                   </NavLink>
                 </li>
                 <li className="nav-item">
-                  <NavLink
-                    to="/register"
-                    className={({ isActive }) =>
-                      `nav-link${isActive ? ' active' : ''}`
-                    }
-                  >
+                  <NavLink to="/register" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                     Registrar
                   </NavLink>
                 </li>
@@ -61,22 +51,12 @@ export default function Navbar() {
             ) : usuario.tipo_usuario === PAPEIS.CLIENTE ? (
               <>
                 <li className="nav-item">
-                  <NavLink
-                    to="/cliente/menu"
-                    className={({ isActive }) =>
-                      `nav-link${isActive ? ' active' : ''}`
-                    }
-                  >
+                  <NavLink to="/cliente/menu" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                     Menu
                   </NavLink>
                 </li>
                 <li className="nav-item position-relative">
-                  <NavLink
-                    to="/cliente/carrinho"
-                    className={({ isActive }) =>
-                      `nav-link${isActive ? ' active' : ''}`
-                    }
-                  >
+                  <NavLink to="/cliente/carrinho" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                     Carrinho
                   </NavLink>
                   {itens.length > 0 && (
@@ -86,12 +66,7 @@ export default function Navbar() {
                   )}
                 </li>
                 <li className="nav-item">
-                  <NavLink
-                    to="/cliente/pedidos"
-                    className={({ isActive }) =>
-                      `nav-link${isActive ? ' active' : ''}`
-                    }
-                  >
+                  <NavLink to="/cliente/pedidos" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                     Meus Pedidos
                   </NavLink>
                 </li>
@@ -99,37 +74,50 @@ export default function Navbar() {
             ) : (
               <>
                 <li className="nav-item">
-                  <NavLink
-                    to="/pizzaiolo/pedidos"
-                    className={({ isActive }) =>
-                      `nav-link${isActive ? ' active' : ''}`
-                    }
-                  >
+                  <NavLink to="/pizzaiolo/pedidos" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                     Pedidos
                   </NavLink>
                 </li>
                 <li className="nav-item">
-                  <NavLink
-                    to="/pizzaiolo/sabores"
-                    className={({ isActive }) =>
-                      `nav-link${isActive ? ' active' : ''}`
-                    }
-                  >
+                  <NavLink to="/pizzaiolo/sabores" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
                     Sabores
                   </NavLink>
                 </li>
               </>
             )}
           </ul>
-
+          
+          {}
+          {}
           {usuario && (
-            <button
-              className="btn btn-outline-light fw-semibold"
-              onClick={handleLogout}
-            >
-              Sair
-            </button>
+            <div className="navbar-nav">
+              <li className="nav-item dropdown">
+                <a
+                  className="nav-link dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Olá, {usuario.nome}
+                </a>
+                <ul className="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <NavLink className="dropdown-item" to="/perfil">
+                      Meu Perfil
+                    </NavLink>
+                  </li>
+                  <li><hr className="dropdown-divider" /></li>
+                  <li>
+                    <button className="dropdown-item" onClick={handleLogout}>
+                      Sair
+                    </button>
+                  </li>
+                </ul>
+              </li>
+            </div>
           )}
+          {}
         </div>
       </div>
     </nav>

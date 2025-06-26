@@ -72,15 +72,25 @@ async function getUsuarioById(req, res) {
   }
 }
 
-async function putUsuario(req, res) {
-  try {
-    const atualizado = await atualizarUsuario(req.params.id, req.body);
-    return res.json(atualizado);
-  } catch (err) {
-    console.error('Erro ao atualizar usuário:', err);
-    return res.status(500).json({ error: 'Erro ao atualizar usuário' });
-  }
-}
+
+const putUsuario = async (req, res) => {
+    const { id } = req.params;
+    const idToken = req.userId;
+
+    if (Number(id) !== idToken) 
+        return res.status(403).json({ message: "Acesso negado. Você só pode atualizar seu próprio perfil." });
+    
+    try {
+        const usuario = await prisma.usuario.update({
+            where: { id: Number(id) },
+            data: req.body,
+        });
+        const { senha: _, ...usuarioSemSenha } = usuario;
+        res.status(200).json(usuarioSemSenha);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
 
 async function deleteUsuario(req, res) {
   try {

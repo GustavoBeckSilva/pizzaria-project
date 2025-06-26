@@ -5,24 +5,22 @@ import { ProvedorCarrinho } from './context/CarrinhoContext';
 import { RotaProtegida } from './components/RotaProtegida';
 import { PAPEIS } from './utils/constantes';
 
-// Páginas de Autenticação
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
 import HomePage from './pages/Public/HomePage';
 
-// Páginas de Pizzaiolo
 import DashboardPage from './pages/Pizzaiolo/DashboardPage';
 import SaboresPage from './pages/Pizzaiolo/SaboresPage';
 import FlavorForm from './pages/Pizzaiolo/FlavorForm';
 
-// Páginas de Cliente
 import MenuPage from './pages/Cliente/MenuPage';
 import CarrinhoPage from './pages/Cliente/CarrinhoPage';
 import PedidosPage from './pages/Cliente/PedidosPage';
 import CheckoutPage from './pages/Cliente/CheckoutPage';
 
-// Layout compartilhado
 import Layout from './components/Layout';
+
+import PerfilPage from './pages/Perfil/PerfilPage';
 
 function App() {
   return (
@@ -40,6 +38,9 @@ function App() {
 
               {/* Rotas do cliente (precisa estar logado) */}
               <Route element={<RotaProtegida />}>
+                {/* 2. Adicione a nova rota do perfil aqui */}
+                <Route path="/perfil" element={<PerfilPage />} />
+
                 <Route path="/cliente/menu" element={<MenuPage />} />
                 <Route path="/cliente/carrinho" element={<CarrinhoPage />} />
                 <Route path="/cliente/checkout" element={<CheckoutPage />} />
