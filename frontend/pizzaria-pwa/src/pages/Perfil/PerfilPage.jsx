@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../context/AutenticacaoContext'; 
+import { AutenticacaoContext } from '../../context/AutenticacaoContext'; 
 import * as usuariosService from '../../services/usuarios';
 import Button from '../../components/Button'; 
 import FormInput from '../../components/FormInput';
 
 const PerfilPage = () => {
-  const { usuario, refreshUsuario } = useContext(AuthContext);
+  const { usuario, refreshUsuario } = useContext(AutenticacaoContext); 
 
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
