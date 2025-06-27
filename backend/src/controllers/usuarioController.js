@@ -73,47 +73,60 @@ async function getUsuarioById(req, res) {
 }
 
 const putUsuario = async (req, res) => {
-  // --- INÍCIO DA ALTERAÇÃO ---
-  // A lógica de atualização foi refeita para corrigir a verificação de
-  // permissão e para usar o 'usuarioModel', mantendo a consistência do projeto.
-  const { id } = req.params;
-  const idToken = req.user.id;
-
-  // Garante que o usuário logado só pode atualizar o próprio perfil
-  if (Number(id) !== idToken) {
-    return res.status(403).json({ message: "Acesso negado. Você só pode atualizar seu próprio perfil." });
-  }
-
-  const { nome, email, senha } = req.body;
-  const dadosParaAtualizar = {};
-
-  // Adiciona os campos ao objeto de atualização apenas se eles forem fornecidos na requisição
-  if (nome) dadosParaAtualizar.nome = nome;
-  if (email) dadosParaAtualizar.email = email;
-
-  // Se uma nova senha for enviada, gera o hash para ser salvo na base de dados
-  if (senha) {
-    dadosParaAtualizar.senha_hash = await bcrypt.hash(senha, 10);
-  }
-  
-  // Verifica se há de facto dados para atualizar
-  if (Object.keys(dadosParaAtualizar).length === 0) {
-    return res.status(400).json({ message: "Nenhum dado fornecido para atualização." });
-  }
-
+  console.log('--- INICIANDO ATUALIZAÇÃO DE PERFIL ---');
   try {
-    // Usa a função 'atualizarUsuario' do model, em vez de 'prisma'
-    const usuarioAtualizado = await atualizarUsuario(id, dadosParaAtualizar);
+    const { id } = req.params;
+    const idToken = req.user.id;
     
-    // Remove o hash da senha da resposta para não expor essa informação
+    // Log dos dados recebidos
+    console.log(`[Controller] ID do parâmetro da rota: ${id}, Tipo: ${typeof id}`);
+    console.log(`[Controller] ID do token do usuário: ${idToken}, Tipo: ${typeof idToken}`);
+    console.log('[Controller] Dados recebidos no corpo (req.body):', req.body);
+
+    if (Number(id) !== idToken) {
+      console.warn('[Controller] AVISO: Tentativa de acesso negada.');
+      return res.status(403).json({ message: "Acesso negado. Você só pode atualizar seu próprio perfil." });
+    }
+
+    const { nome, email, senha } = req.body;
+    const dadosParaAtualizar = {};
+
+    if (nome) dadosParaAtualizar.nome = nome;
+    if (email) dadosParaAtualizar.email = email;
+
+    if (senha) {
+      console.log('[Controller] Nova senha recebida. Gerando hash...');
+      dadosParaAtualizar.senha_hash = await bcrypt.hash(senha, 10);
+    }
+    
+    if (Object.keys(dadosParaAtualizar).length === 0) {
+      console.warn('[Controller] AVISO: Nenhum dado fornecido para atualização.');
+      return res.status(400).json({ message: "Nenhum dado fornecido para atualização." });
+    }
+
+    console.log('[Controller] Objeto a ser enviado para o modelo:', dadosParaAtualizar);
+    
+    // Chamada ao modelo
+    const usuarioAtualizado = await atualizarUsuario(id, dadosParaAtualizar);
+
+    console.log('[Controller] Resposta recebida do modelo:', usuarioAtualizado);
+
+    if (!usuarioAtualizado) {
+       console.error('[Controller] ERRO: O modelo retornou undefined. A atualização pode não ter encontrado o ID.');
+       throw new Error('Usuário não encontrado para atualização.');
+    }
+
     const { senha_hash, ...usuarioSemSenha } = usuarioAtualizado;
 
+    console.log('[Controller] Enviando resposta de sucesso para o frontend.');
+    console.log('--- FIM DA ATUALIZAÇÃO DE PERFIL ---');
     res.status(200).json(usuarioSemSenha);
+
   } catch (error) {
-    console.error('Erro ao atualizar usuário:', error);
-    res.status(400).json({ message: 'Erro ao atualizar o perfil.' });
+    console.error('[Controller] ERRO FATAL NO BLOCO CATCH:', error);
+    console.log('--- FIM DA ATUALIZAÇÃO DE PERFIL COM ERRO ---');
+    res.status(400).json({ message: 'Ocorreu um erro ao atualizar o perfil.' });
   }
-  // --- FIM DA ALTERAÇÃO ---
 };
 
 async function deleteUsuario(req, res) {

@@ -41,15 +41,30 @@ async function criarUsuario({ nome, email, senha_hash, tipo_usuario }) {
 }
 
 async function atualizarUsuario(id, campos) {
+  console.log('[Model] Função atualizarUsuario chamada com ID:', id, 'e campos:', campos);
+
   const cols = Object.keys(campos);
   const vals = Object.values(campos);
   const set = cols.map((c, i) => `${c} = $${i + 1}`).join(', ');
-  const res = await db.query(
-    `UPDATE tb_usuarios SET ${set} WHERE id = $${cols.length + 1}
-     RETURNING id, nome, email, tipo_usuario, criado_em, atualizado_em`,
-    [...vals, id]
-  );
-  return res.rows[0];
+  
+  const queryText = `UPDATE tb_usuarios SET ${set} WHERE id = $${cols.length + 1} RETURNING id, nome, email, tipo_usuario, criado_em, atualizado_em`;
+  const queryValues = [...vals, id];
+
+  console.log('[Model] Executando a query SQL:', queryText);
+  console.log('[Model] Com os valores:', queryValues);
+
+  try {
+    const res = await db.query(queryText, queryValues);
+    
+    // Log importante para ver o que a base de dados realmente retornou
+    console.log(`[Model] Query executada com sucesso. ${res.rowCount} linha(s) afetada(s).`);
+    console.log('[Model] Dados retornados pela base de dados (res.rows[0]):', res.rows[0]);
+
+    return res.rows[0];
+  } catch (error) {
+    console.error('[Model] ERRO ao executar a query de atualização:', error);
+    throw error; // Propaga o erro para o controller
+  }
 }
 
 async function removerUsuario(id) {
