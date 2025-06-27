@@ -13,7 +13,7 @@ async function postUsuario(req, res) {
   const {
     nome,
     email,
-    senha_hash: rawPassword,   // aqui vem a senha em texto puro
+    senha_hash: rawPassword, // aqui vem a senha em texto puro
     tipo_usuario,
     adminSecret
   } = req.body;
@@ -72,24 +72,48 @@ async function getUsuarioById(req, res) {
   }
 }
 
-
 const putUsuario = async (req, res) => {
-    const { id } = req.params;
-    const idToken = req.userId;
+  // --- INÍCIO DA ALTERAÇÃO ---
+  // A lógica de atualização foi refeita para corrigir a verificação de
+  // permissão e para usar o 'usuarioModel', mantendo a consistência do projeto.
+  const { id } = req.params;
+  const idToken = req.user.id;
 
-    if (Number(id) !== idToken) 
-        return res.status(403).json({ message: "Acesso negado. Você só pode atualizar seu próprio perfil." });
+  // Garante que o usuário logado só pode atualizar o próprio perfil
+  if (Number(id) !== idToken) {
+    return res.status(403).json({ message: "Acesso negado. Você só pode atualizar seu próprio perfil." });
+  }
+
+  const { nome, email, senha } = req.body;
+  const dadosParaAtualizar = {};
+
+  // Adiciona os campos ao objeto de atualização apenas se eles forem fornecidos na requisição
+  if (nome) dadosParaAtualizar.nome = nome;
+  if (email) dadosParaAtualizar.email = email;
+
+  // Se uma nova senha for enviada, gera o hash para ser salvo na base de dados
+  if (senha) {
+    dadosParaAtualizar.senha_hash = await bcrypt.hash(senha, 10);
+  }
+  
+  // Verifica se há de facto dados para atualizar
+  if (Object.keys(dadosParaAtualizar).length === 0) {
+    return res.status(400).json({ message: "Nenhum dado fornecido para atualização." });
+  }
+
+  try {
+    // Usa a função 'atualizarUsuario' do model, em vez de 'prisma'
+    const usuarioAtualizado = await atualizarUsuario(id, dadosParaAtualizar);
     
-    try {
-        const usuario = await prisma.usuario.update({
-            where: { id: Number(id) },
-            data: req.body,
-        });
-        const { senha: _, ...usuarioSemSenha } = usuario;
-        res.status(200).json(usuarioSemSenha);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
+    // Remove o hash da senha da resposta para não expor essa informação
+    const { senha_hash, ...usuarioSemSenha } = usuarioAtualizado;
+
+    res.status(200).json(usuarioSemSenha);
+  } catch (error) {
+    console.error('Erro ao atualizar usuário:', error);
+    res.status(400).json({ message: 'Erro ao atualizar o perfil.' });
+  }
+  // --- FIM DA ALTERAÇÃO ---
 };
 
 async function deleteUsuario(req, res) {
